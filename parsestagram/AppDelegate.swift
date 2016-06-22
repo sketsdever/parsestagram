@@ -7,15 +7,33 @@
 //
 
 import UIKit
+import Parse
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        //window = UIWindow(frame: UIScreen.mainScreen().bounds)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        
+        // Initialize Parse
+        // Set applicationId and server based on the values in the Heroku settings.
+        // clientKey is not used on Parse open source unless explicitly configured
+        Parse.initializeWithConfiguration(
+            ParseClientConfiguration(block: { (configuration:ParseMutableClientConfiguration) -> Void in
+                configuration.applicationId = "parsestagram"
+                configuration.clientKey = "123456789"  // set to nil assuming you have not set clientKey
+                configuration.server = "https://whispering-island-89159.herokuapp.com/parse"
+            })
+        )
+        
+        if PFUser.currentUser() != nil {
+            self.window?.rootViewController = storyboard.instantiateViewControllerWithIdentifier("TabBarController")
+        }
+        
         return true
     }
 

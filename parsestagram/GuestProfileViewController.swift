@@ -1,26 +1,29 @@
 //
-//  FeedViewController.swift
+//  GuestProfileViewController.swift
 //  parsestagram
 //
-//  Created by Shea Ketsdever on 6/20/16.
+//  Created by Shea Ketsdever on 6/22/16.
 //  Copyright © 2016 Shea Ketsdever. All rights reserved.
 //
 
 import UIKit
+
+import UIKit
 import Parse
+import ParseUI
 import MBProgressHUD
 
-protocol GuestProfileHandler : class {
-    func goToProfile (user : PFUser)
-}
-
-class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate, GuestProfileHandler {
-
-    @IBOutlet weak var tableView: UITableView!
+class GuestProfileViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+    
+    var user: PFUser!
+    
+    @IBOutlet weak var profileImageView: PFImageView!
+    @IBOutlet weak var usernameLabel: UILabel!
+    @IBOutlet weak var collectionView: UICollectionView!
     
     var posts: [PFObject] = [] {
         didSet {
-            self.tableView.reloadData()
+            self.collectionView.reloadData()
         }
     }
     
@@ -35,6 +38,21 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         let imageView = UIImageView(image:logo)
         self.navigationItem.titleView = imageView
         
+        if user == nil {
+            print("oops")
+        }
+        
+        if user["profileImage"] != nil {
+            loadProfileImage()
+        } else {
+            profileImageView.image = UIImage(named: "profile")
+        }
+        
+        usernameLabel.text = user.username
+        
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
         queryLimit = 20
         
         NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: #selector(FeedViewController.loadData), userInfo: nil, repeats: true)
@@ -42,35 +60,34 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         MBProgressHUD.showHUDAddedTo(self.view, animated: true)
         loadData()
         MBProgressHUD.hideHUDForView(self.view, animated: true)
-
-        
-        tableView.dataSource = self
-        tableView.delegate = self
         
         // Initialize a UIRefreshControl
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: #selector(refreshControlAction(_:)), forControlEvents: UIControlEvents.ValueChanged)
-        tableView.insertSubview(refreshControl, atIndex: 0)
+        collectionView.insertSubview(refreshControl, atIndex: 0)
         
         
         // Set up Infinite Scroll loading indicator
-        let frame = CGRectMake(0, tableView.contentSize.height, tableView.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
+        let frame = CGRectMake(0, collectionView.contentSize.height, collectionView.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
         loadingMoreView = InfiniteScrollActivityView(frame: frame)
         loadingMoreView!.hidden = true
-        tableView.addSubview(loadingMoreView!)
-        var insets = tableView.contentInset;
+        collectionView.addSubview(loadingMoreView!)
+        var insets = collectionView.contentInset;
         insets.bottom += InfiniteScrollActivityView.defaultHeight;
-        tableView.contentInset = insets
+        collectionView.contentInset = insets
         
-        self.tableView.reloadData()
+        self.collectionView.reloadData()
     }
-
+    
+    func loadProfileImage() {
+        profileImageView.file = user["profileImage"] as? PFFile
+        profileImageView.loadInBackground()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    // Makes a network request to get updated data
+    }    // Makes a network request to get updated data
     // Updates the tableView with the new data
     // Hides the RefreshControl
     func refreshControlAction(refreshControl: UIRefreshControl) {
@@ -84,28 +101,29 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
         // Calculate the position of one screen length before the bottom of the results
-        let scrollViewContentHeight = tableView.contentSize.height
-        let scrollOffsetThreshold = scrollViewContentHeight - tableView.bounds.size.height
+        let scrollViewContentHeight = collectionView.contentSize.height
+        let scrollOffsetThreshold = scrollViewContentHeight - collectionView.bounds.size.height
         
         // When the user has scrolled past the threshold, start requesting
-        if(scrollView.contentOffset.y > scrollOffsetThreshold && tableView.dragging) {
+        if(scrollView.contentOffset.y > scrollOffsetThreshold && collectionView.dragging) {
             isMoreDataLoading = true
             queryLimit = queryLimit + 5
             
             // Update position of loadingMoreView, and start loading indicator
-            let frame = CGRectMake(0, tableView.contentSize.height, tableView.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
+            let frame = CGRectMake(0, collectionView.contentSize.height, collectionView.bounds.size.width, InfiniteScrollActivityView.defaultHeight)
             loadingMoreView?.frame = frame
             loadingMoreView!.startAnimating()
             
             loadData()
         }
     }
-        
+    
     
     func loadData() {
         let query = PFQuery(className: "Post")
         query.orderByDescending("createdAt")
         query.includeKey("author")
+        query.whereKey("author", equalTo: user)
         if isMoreDataLoading {
             query.limit = queryLimit
         } else {
@@ -113,63 +131,45 @@ class FeedViewController: UIViewController, UITableViewDataSource, UITableViewDe
         }
         query.findObjectsInBackgroundWithBlock { (objects: [PFObject]?, error: NSError?) -> Void in
             if error == nil {
+                print("successfully retrieved things")
                 
                 if let objects = objects {
                     self.isMoreDataLoading = false
                     self.posts = objects
                     self.loadingMoreView!.stopAnimating()
-                    self.tableView.reloadData()
+                    self.collectionView.reloadData()
                 }
             } else {
                 print(error?.localizedDescription)
             }
         }
-        
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return posts.count
+    }
+    
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("PostTableViewCell", forIndexPath: indexPath) as! PostTableViewCell
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("ProfileCollectionViewCell", forIndexPath: indexPath) as! ProfileCollectionViewCell
+        print("hm")
         
         let post = posts[indexPath.row]
         cell.gram = post
-        cell.handler = self
         
         return cell
+        
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count
-    }
-        
-   override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "FeedToDetailSegue" {
-            print("FeedToDetailSegue")
-            let cell = sender as! UITableViewCell
-            let indexPath = tableView.indexPathForCell(cell)
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "GuestProfileToDetailSegue" {
+            let cell = sender as! UICollectionViewCell
+            let indexPath = collectionView.indexPathForCell(cell)
             let post = posts[indexPath!.row]
-            print("\(post)")
             
             let detailViewController = segue.destinationViewController as! DetailViewController
             
             detailViewController.post = post
         }
-        if segue.identifier == "FeedToGuestDetailSegue" {
-//            print("FeedToGuestProfileSegue????")
-            let guestProfileViewController = segue.destinationViewController as! GuestProfileViewController
-//            
-//            let cell = sender?.containerView() as! UITableViewCell
-//            
-//            let indexPath = tableView.indexPathForCell(cell)
-//            let post = posts[indexPath!.row]
-//            print("post: \(post)")
-//            let user = post["author"] as? PFUser
-//            print("user: \(user)")
-            guestProfileViewController.user = sender as! PFUser
-        }
-    }
-    
-    func goToProfile (user : PFUser) {
-        self.performSegueWithIdentifier("FeedToGuestDetailSegue", sender: user)
     }
 }

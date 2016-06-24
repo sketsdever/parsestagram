@@ -14,9 +14,9 @@ The following **required** functionality is completed:
 - [x] User can take a photo, add a caption, and post it to "Instagram"
 - [x] User can view the last 20 posts submitted to "Instagram"
 - [x] User can pull to refresh the last 20 posts submitted to "Instagram"
-- [ ] User can load more posts once he or she reaches the bottom of the feed using infinite Scrolling
+- [x] User can load more posts once he or she reaches the bottom of the feed using infinite Scrolling
 - [x] User can tap a post to view post details, including timestamp and creation
-- [ ] User can use a tab bar to switch between all "Instagram" posts and posts published only by the user.
+- [x] User can use a tab bar to switch between all "Instagram" posts and posts published only by the user.
 
 The following **optional** features are implemented:
 
@@ -25,15 +25,16 @@ The following **optional** features are implemented:
 - [ ] User Profiles:
 - [x] Allow the logged in user to add a profile photo
 - [x] Display the profile photo with each post
-- [ ] Tapping on a post's username or profile photo goes to that user's profile page
-- [ ] User can comment on a post and see all comments for each post in the post details screen.
-- [ ] User can like a post and see number of likes for each post in the post details screen.
+- [x] Tapping on a post's username or profile photo goes to that user's profile page
+- [x] User can comment on a post and see all comments for each post in the post details screen.
+- [x] User can like a post and see number of likes for each post in the post details screen.
 - [ ] Run your app on your phone and use the camera to take the photo
 
 
 The following **additional** features are implemented:
 
-- [ ] List anything else that you can get done to improve the app functionality!
+- [x] Added settings screen so user can update their profile and log out in a separate screen
+- [x] Improved UI features. Added icons, colors, background views, etc.
 
 Please list two areas of the assignment you'd like to **discuss further with your peers** during the next class (examples include better ways to implement something, how to extend your app in certain ways, etc):
 
@@ -56,6 +57,11 @@ List an 3rd party libraries, icons, graphics, or other assets you used in your a
 - Photography by iconsphere from the Noun Project
 - User by Umar Irshad from the Noun Project
 - Home by Chris Penny from the Noun Project
+- Camera by Andrey Vasiliev from the Noun Project
+- Check Mark by Nick Abrams from the Noun Project
+- setting by Chameleon Design from the Noun Project
+- Star by Vicons Design from the Noun Project
+- Very Basic. Android L (Lollipop) Icon Pack. Collection from the Noun Project
 
 ## Notes
 

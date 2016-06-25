@@ -271,6 +271,7 @@
 				TargetAttributes = {
 					420A62FF1D17C5CC00210F33 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 345TPGR377;
 					};
 					420A63131D17C5CD00210F33 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -611,10 +612,13 @@
 			baseConfigurationReference = 587D3DA967298DCD90F025D2 /* Pods-parsestagram.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = parsestagram/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.codepath.parsestagram;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -623,10 +627,13 @@
 			baseConfigurationReference = 111651216BF4D470EC44347F /* Pods-parsestagram.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = parsestagram/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.codepath.parsestagram;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

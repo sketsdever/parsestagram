@@ -177,14 +177,14 @@ class DetailViewController: UIViewController , UITableViewDataSource, UITableVie
         
         cell.commentLabel.text = comment["text"] as? String
         
-        var author: PFUser!
+        /*var author: PFUser!
         author = post["author"] as? PFUser
         print("\(author)")
         if author["profileImage"] != nil {
             print("yay")
             cell.profileImageView.file = author["profileImage"] as? PFFile
             cell.profileImageView.loadInBackground()
-        }
+        }*/
         
         return cell
     }

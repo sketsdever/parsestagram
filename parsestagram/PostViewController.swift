@@ -10,7 +10,7 @@ import UIKit
 import Parse
 import MBProgressHUD
 
-class PostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class PostViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
 
     var image: UIImage?
     
@@ -18,6 +18,8 @@ class PostViewController: UIViewController, UIImagePickerControllerDelegate, UIN
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        captionField.delegate = self
         
         let logo = UIImage(named: "logo_small")
         let imageView = UIImageView(image:logo)
@@ -103,6 +105,11 @@ class PostViewController: UIViewController, UIImagePickerControllerDelegate, UIN
             }
         }
         return nil
+    }
+    
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
+        self.view.endEditing(true)
+        return false
     }
     
 
